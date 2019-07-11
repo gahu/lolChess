@@ -12,7 +12,7 @@ from slack.web.classes.blocks import *
 from slack.web.classes.elements import *
 from slack.web.classes.interactions import MessageInteractiveEvent
 
-SLACK_TOKEN = 'xoxb-691564988023-689257415652-53Ime9PhhdIZ4yS6FzVBfUBs'
+SLACK_TOKEN = 'xoxb-691564988023-689257415652-HwOaw33U2pdY5MSWTRG77TBb'
 SLACK_SIGNING_SECRET = 'cdd6271c90db7f3e70bfe46c39459dcc'
 
 app = Flask(__name__)
@@ -27,8 +27,8 @@ def _crawl_command(text):
 
 # 가이드 함수
 def _crawl_guide(text):
-    menu = text[19:]
-
+    menu = text[15]
+    print(menu)
     if menu == '1' : # gold
         menu_url = 'guide/exp'
         title_block = SectionBlock(
@@ -61,7 +61,7 @@ def _crawl_guide(text):
         )
         return [block1]
 
-    url = "https://lolchess.gg/champions/garen"
+    url = "https://lolchess.gg/" + menu_url + "?hl=ko-KR"
     req = urllib.request.Request(url)
     sourcecode = urllib.request.urlopen(url).read()
     soup = BeautifulSoup(sourcecode, "html.parser")
