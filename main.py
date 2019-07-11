@@ -12,8 +12,8 @@ from slack.web.classes.blocks import *
 from slack.web.classes.elements import *
 from slack.web.classes.interactions import MessageInteractiveEvent
 
-SLACK_TOKEN = 'xoxb-691564988023-689257415652-HwOaw33U2pdY5MSWTRG77TBb'
-SLACK_SIGNING_SECRET = 'cdd6271c90db7f3e70bfe46c39459dcc'
+SLACK_TOKEN = 'xoxb-691564988023-689723470832-odO0Z2vGZnJ6E7j4JmC8kap7'
+SLACK_SIGNING_SECRET = 'db405cc062a74c7091224c77a51ad149'
 
 app = Flask(__name__)
 # /listening 으로 슬랙 이벤트를 받습니다.
@@ -27,7 +27,7 @@ def _crawl_command(text):
 
 # 가이드 함수
 def _crawl_guide(text):
-    menu = text[15]
+    menu = text[15:]
     print(menu)
     if menu == '1' : # gold
         menu_url = 'guide/exp'
@@ -159,7 +159,6 @@ def _crawl_champion(text):
     if champion == "":
         return "챔피언 이름을 잘 못 입력하셨습니다.\n 확인하시고 다시 시도해주세요."
 
-    # lucian
     url = "https://lolchess.gg/champions/" + champion + "?hl=ko-KR"
     req = urllib.request.Request(url)
 
@@ -211,6 +210,7 @@ def _crawl_champion(text):
         skillText = "*스킬* : "
         skill = champ.find("div", class_="guide-champion-detail__skill")
         skillname = skill.find("strong", class_="d-block font-size-14").get_text()
+        skillurl = skill.find("img", class_="guide-champion-detail__skill__icon")["src"]
         skills.append(skillname)
         skillclass = ""
         for k in skill.find("div", class_="text-gray").find_all("span"):
@@ -220,6 +220,14 @@ def _crawl_champion(text):
         skills.append(skilldetail)
         for dep in skills:
             skillText += dep+"\n"
+        skill_Image = ImageBlock(
+            image_url=skillurl,
+            alt_text="skill Image"
+        )
+        skillBlock = SectionBlock(
+            text=skillText,
+            accessory=skill_Image
+        )
 
         # 시너지 챔피언
         synText = "*시너지* : \n"
@@ -253,54 +261,28 @@ def _crawl_champion(text):
             for depth in dep.find_all("img"):
                 src.append(depth["src"])
 
-        # 추천아이템 이미지(미완성)
-        # item1 = ""
-        # item2 = ""
-        # item3 = ""
-        # item4 = ""
-        # for ct, kp in enumerate(src):
-        #     if ct == 0:
-        #         item1 += kp
-        #     elif ct == 1:
-        #         item2 += kp
-        #     elif ct == 2:
-        #         item3 += kp
-        #     elif ct == 3:
-        #         item4 += kp
-        #     else:
-        #         pass
-
-        # first_item_image = ImageBlock(
-        #     image_url=item1,
-        #     alt_text="item1"
-        # )
-        # second_item_image = ImageBlock(
-        #     image_url=item1,
-        #     alt_text="item1"
-        # )
-        # third_item_image = ImageBlock(
-        #     image_url=item1,
-        #     alt_text="item1"
-        # )
-        # fourth_item_image = ImageBlock(
-        #     image_url=item1,
-        #     alt_text="item1"
-        # )
-        # itemImageBlock = SectionBlock(
-        #     accessory=first_item_image,
-        #     accessory=second_item_image,
-        #     accessory=third_item_image,
-        #     accessory=fourth_item_image,
-        # )
-
-        textBlock = SectionBlock(
-            fields=[nameText, costText, job, skillText, synText, items]
+        itemImageUrl = champion+".png"
+        print(itemImageUrl)
+        item_image = ImageBlock(
+            image_url=itemImageUrl,
+            alt_text="item1"
+        )
+        itemImageBlock = SectionBlock(
+            text=items,
+            accessory=item_image
         )
 
-    return [championImageBlock, textBlock]
+        textBlock = SectionBlock(
+            fields=[nameText, costText, job, items, synText]
+        )
+
+    return [championImageBlock, textBlock, skillBlock, itemImageBlock]
 
 # 시너지 함수
 def _crawl_synergies(text):
+    st = text[15:]
+    text = st
+
     url = "https://lolchess.gg/synergies?hl=ko-KR"
     source_code = urllib.request.urlopen(url).read()
     soup = BeautifulSoup(source_code, "html.parser")
@@ -504,12 +486,12 @@ def app_mentioned(event_data):
             channel=channel,
             blocks=extract_json(messageBlock)
         )
-    elif text[13:] == "synergies":
+    elif text[13:14] == "s":
         message = _crawl_synergies(text)
         slack_web_client.chat_postMessage(
             channel=channel,
-            # text=message
-            text="시너지 정보 입니다."
+            text=message
+            # text="시너지 정보 입니다."
         )
     else:
         message = _crawl_else()
