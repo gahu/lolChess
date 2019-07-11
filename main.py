@@ -95,7 +95,7 @@ def _crawl_guide(text):
             )
             block.append([temp])
         img = ImageBlock(
-            image_url= "https://raw.githubusercontent.com/gahu/lolChess/master/gold.png",
+            image_url= "https://raw.githubusercontent.com/gahu/lolChess/master/guideImage/gold.png",
             alt_text = "응 안나와"
         )
         # 바깥의 list 제거
@@ -111,19 +111,19 @@ def _crawl_guide(text):
         message = [title_block] + [item for sublist in block for item in sublist]
     elif menu == '3': # 단축키
         img = ImageBlock(
-            image_url="https://raw.githubusercontent.com/gahu/lolChess/master/hotkey.png",
+            image_url="https://raw.githubusercontent.com/gahu/lolChess/master/guideImage/hotkey.png",
             alt_text="응 안나와"
         )
         message = [title_block]+[img]
     elif menu == '4': #리롤
         img = ImageBlock(
-            image_url="https://raw.githubusercontent.com/gahu/lolChess/master/reroll.png",
+            image_url="https://raw.githubusercontent.com/gahu/lolChess/master/guideImage/reroll.png",
             alt_text="응 안나와"
         )
         message = [title_block] + [img]
     else: # 아이템
         img = ImageBlock(
-            image_url="https://raw.githubusercontent.com/gahu/lolChess/master/item.png",
+            image_url="https://raw.githubusercontent.com/gahu/lolChess/master/guideImage/item.png",
             alt_text="응 안나와"
         )
         message = [title_block] + [img]
