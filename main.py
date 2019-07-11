@@ -12,7 +12,7 @@ from slack.web.classes.blocks import *
 from slack.web.classes.elements import *
 from slack.web.classes.interactions import MessageInteractiveEvent
 
-SLACK_TOKEN = 'xoxb-691564988023-689723470832-odO0Z2vGZnJ6E7j4JmC8kap7'
+SLACK_TOKEN = 'xoxb-691564988023-689723470832-5anzfhw63JS5jS798L19Uqdi'
 SLACK_SIGNING_SECRET = 'db405cc062a74c7091224c77a51ad149'
 
 app = Flask(__name__)
@@ -257,26 +257,25 @@ def _crawl_champion(text):
         src = []
         for dep in champ.find_all("div", class_="d-inline-block mr-2"):
             items += dep.find("img")["alt"] + " || "
-        for dep in champ.find_all("div", class_="guide-champion-detail__recommend-items mt-2"):
-            for depth in dep.find_all("img"):
-                src.append(depth["src"])
+        # for dep in champ.find_all("div", class_="guide-champion-detail__recommend-items mt-2"):
+        #     for depth in dep.find_all("img"):
+        #         src.append(depth["src"])
 
-        itemImageUrl = champion+".png"
-        print(itemImageUrl)
-        item_image = ImageBlock(
+        itemImageUrl = "https://raw.githubusercontent.com/gahu/lolChess/master/itemsImage/"+champion+".png"
+
+        item_image_block = ImageBlock(
             image_url=itemImageUrl,
-            alt_text="item1"
+            alt_text="items"
         )
-        itemImageBlock = SectionBlock(
-            text=items,
-            accessory=item_image
+        item_text_block = SectionBlock(
+            text=items
         )
 
         textBlock = SectionBlock(
-            fields=[nameText, costText, job, items, synText]
+            fields=[nameText, costText, job, synText]
         )
 
-    return [championImageBlock, textBlock, skillBlock, itemImageBlock]
+    return [championImageBlock, textBlock, skillBlock, item_text_block, item_image_block]
 
 # 시너지 함수
 def _crawl_synergies(text):
