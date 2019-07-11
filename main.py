@@ -301,9 +301,173 @@ def _crawl_champion(text):
 
 # 시너지 함수
 def _crawl_synergies(text):
+    url = "https://lolchess.gg/synergies?hl=ko-KR"
+    source_code = urllib.request.urlopen(url).read()
+    soup = BeautifulSoup(source_code, "html.parser")
+    # 전체 시너지 내용
+    synergy_content = []
+    # 시너지 옵션
+    synergy_option = []
+    # 시너지 효과
+    synergy_effect = []
+    # 요구하는 시너지 내용
+    synergy_out =[]
+    # 시너지 챔피언
+    synergy_champion = []
 
-    return text
+    synergy_index ={
+        0: '공허',
+        1: '귀족',
+        2: '닌자',
+        3: '로봇',
+        4: '빙하',
+        5: '악마',
+        6: '야생',
+        7: '요들',
+        8: '용',
+        9: '유령',
+        10: '제국',
+        11: '추방자',
+        12: '해적',
+        13: '검사',
+        14: '기사',
+        15: '마법사',
+        16: '수호자',
+        17: '싸움꾼',
+        18: '암살자',
+        19: '원소술사',
+        20: '정찰대',
+        21: '총잡이' ,
+        22: '형상변환자'
+    }
+    champion_index = [
+    '트위스티드페이트' ,
+    '가렌',
+    '갱플랭크' ,
+    '그레이브즈' ,
+    '나르' ,
+    '니달리' ,
+    '다리우스',
+    '드레이븐',
+    '레오나',
+    '렉사이' ,
+    '렝가' ,
+    '루시안' ,
+    '룰루' ,
+    '리산드라',
+    '모데카이저' ,
+    '모르가나' ,
+    '미스포츈',
+    '바루스',
+    '베이가',
+    '베인' ,
+    '볼리베어' ,
+    '브라움' ,
+    '브랜드' ,
+    '블리츠크랭크',
+    '뽀삐',
+    '세주아니',
+    '쉔',
+    '쉬바나' ,
+    '스웨인',
+    '아리',
+    '아우렐리온솔',
+    '아칼리',
+    '아트록스',
+    '애니비아',
+    '애쉬',
+    '야스오',
+    '엘리스',
+    '워윅' ,
+    '이블린',
+    '제드',
+    '초가스',
+    '카사딘',
+    '카서스',
+    '카직스',
+    '카타리나',
+    '케넨' ,
+    '케일' ,
+    '킨드레드',
+    '트리스타나',
+    '파이크',
+    '피오라']
 
+
+    #시너지 모든 효과 & 옵션 크롤링
+    for contents in soup.find_all("div", class_="guide-synergy__content"):
+        for effect in contents.find_all("div", class_="guide-synergy__description"):
+            synergy_effect.append('*시너지* : ' + effect.get_text().replace('\n', ''))
+        if synergy_effect == []:
+            synergy_effect.append('')
+        for option in contents.find_all("div", class_="guide-synergy__stats"):
+            synergy_option.append('*세부사항* : ' + option.get_text().replace('\n', ''))
+        for champion in contents.find_all("div",class_="guide-synergy__champions"):
+            synergy_champion.append('*챔피언* :' + champion.get_text().replace('\n', '').replace('$',',')
+                                    .replace('1',' ').replace('2',' ').replace('3',' ').replace('4',' ').replace('5',' '))
+
+        #모든내용 synergy_content에 담는다.
+        synergy_content.append(synergy_effect + synergy_option + synergy_champion)
+
+        synergy_option = []
+        synergy_effect = []
+        synergy_champion =[]
+        synergy_count = []
+
+    #print(synergy_content) :총 시너지 내용
+
+    command = text.split()
+    #print(synergy_content)
+    #print(command)
+
+    #입력받은 text에서 시너지 이름 나오면 옵션, 효과, 해당 챔피언 리턴
+    for idx in range(len(synergy_index)):
+            for cmd in range(len(command)):
+                if synergy_index[idx] in command[cmd]:
+                    synergy_out.append('*'+ synergy_index[idx] +'*')
+                    synergy_out.append(synergy_content[idx][0])
+                    if synergy_content[idx][0]=='':
+                        synergy_out.pop()
+                    synergy_out.append(synergy_content[idx][1])
+                    synergy_out.append(synergy_content[idx][2][:7] + synergy_content[idx][2][8:])
+                    synergy_out.append('')
+
+    # 시너지 카운트
+    # for idx in range(len(champion_index)):
+
+    # print(champion_index)
+    # for idx in range(len(champion_index)):
+    #     for cmd in range(len(command)):
+    #         if champion_index[idx] in command[cmd]:
+    for cnt in range(len(champion_index)):
+        for cmd in range(len(command)):
+            if champion_index[cnt] in command[cmd]: #가렌이 있어!-> 시너지 찾아
+                for i in range(len(synergy_content)):
+                    if champion_index[cnt] in synergy_content[i][2]:
+                        print(synergy_index[i])
+                        synergy_count.append(synergy_index[i]) #시너지 다 가져왔어
+
+    count_list = [0 for i in range(23)]
+    if not synergy_count == '':
+        synergy_out.append('*보유하고 있는 챔피언 시너지*')
+        synergy_out.append('(시너지 : 챔피언 수)')
+        #각 시너지가 몇개인지 체크
+        for i in range(len(synergy_count)):
+            for j in range(len(synergy_index)):
+                print(synergy_index[j])
+                if synergy_count[i] == synergy_index[j]:
+                    count_list[j] += 1
+        #1개 이상이면 출력
+        for i in range(23):
+            if count_list[i] > 0:
+                synergy_out.append(synergy_index[i]+ ' : ' + str(count_list[i]))
+
+    if synergy_out == []:
+        synergy_out.append("시너지를 잘못 입력하였습니다. 다시 시도해주세요")
+
+
+    print((synergy_content[4][2]))
+    return '\n'.join(synergy_out)
 # 예외처리
 def _crawl_else():
     title_block = SectionBlock(
