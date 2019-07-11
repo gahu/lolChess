@@ -12,7 +12,7 @@ from slack.web.classes.blocks import *
 from slack.web.classes.elements import *
 from slack.web.classes.interactions import MessageInteractiveEvent
 
-SLACK_TOKEN = 'xoxb-691564988023-689257415652-xdEFN9MS6kc5fQNBgyGUNizf'
+SLACK_TOKEN = 'xoxb-691564988023-689257415652-53Ime9PhhdIZ4yS6FzVBfUBs'
 SLACK_SIGNING_SECRET = 'cdd6271c90db7f3e70bfe46c39459dcc'
 
 app = Flask(__name__)
@@ -95,7 +95,7 @@ def _crawl_guide(text):
             )
             block.append([temp])
         img = ImageBlock(
-            image_url= "https://raw.githubusercontent.com/LeeGeunSeong/lolChess2/master/gold.png",
+            image_url= "https://raw.githubusercontent.com/gahu/lolChess/master/gold.png",
             alt_text = "응 안나와"
         )
         # 바깥의 list 제거
@@ -111,19 +111,19 @@ def _crawl_guide(text):
         message = [title_block] + [item for sublist in block for item in sublist]
     elif menu == '3': # 단축키
         img = ImageBlock(
-            image_url="https://raw.githubusercontent.com/LeeGeunSeong/lolChess2/master/hotkey.png",
+            image_url="https://raw.githubusercontent.com/gahu/lolChess/master/hotkey.png",
             alt_text="응 안나와"
         )
         message = [title_block]+[img]
     elif menu == '4': #리롤
         img = ImageBlock(
-            image_url="https://raw.githubusercontent.com/LeeGeunSeong/lolChess2/master/reroll.png",
+            image_url="https://raw.githubusercontent.com/gahu/lolChess/master/reroll.png",
             alt_text="응 안나와"
         )
         message = [title_block] + [img]
     else: # 아이템
         img = ImageBlock(
-            image_url="https://raw.githubusercontent.com/LeeGeunSeong/lolChess2/master/item.png",
+            image_url="https://raw.githubusercontent.com/gahu/lolChess/master/item.png",
             alt_text="응 안나와"
         )
         message = [title_block] + [img]
@@ -211,4 +211,4 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run('0.0.0.0', port=7000)
+    app.run('0.0.0.0', port=5000)
