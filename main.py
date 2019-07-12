@@ -12,8 +12,7 @@ from slack.web.classes.blocks import *
 from slack.web.classes.elements import *
 from slack.web.classes.interactions import MessageInteractiveEvent
 
-SLACK_TOKEN = 'xoxb-691564988023-689723470832-y04KlpQA0XI4f7sytk62LZXw'
-SLACK_SIGNING_SECRET = 'db405cc062a74c7091224c77a51ad149'
+from config import *
 
 app = Flask(__name__)
 # /listening 으로 슬랙 이벤트를 받습니다.
@@ -57,7 +56,7 @@ def _crawl_guide(text):
     else: # guide 뒤에 잘못된 글자를 썼을 때
         block1 = SectionBlock(
             fields=["*Guide에는 다음과 같은 메뉴가 있습니다.*", '\n', "1.  골드", "2.  경험치", "3.  단축키", "4.  리롤 확률", "5.  아이템 정보", '\n',
-                    "`@lolchess guide 1`과 같은 방법으로 입력해주세요"]
+                    "`@loltochessbot guide 1 or g 1`과 같은 방법으로 입력해주세요"]
         )
         return [block1]
 
@@ -203,7 +202,7 @@ def _crawl_champion(text):
 
         # jongjokBlock = ImageBlock(
         #     image_url="//static.lolchess.gg/images/tft/traiticons-white/trait_icon_"+jjongjok+".png",
-        #     alt_text="jongjok"
+        #         #         #     alt_text="jongjok"
         # )
 
         # 스킬
@@ -455,7 +454,7 @@ def _crawl_else():
         text = "*LoLChess의 기능과 단축키는 다음과 같습니다*\n"
     )
     s_block = SectionBlock(
-        fields = ["*1. 챔피언 정보*","@lolchess c 챔피언 이름","*2. 시너지 정보*", "@lolchess 귀족 or 챔피언 이름","*3. 가이드*", "@lolchess g"]
+        fields = ["*1. 챔피언 정보*","@loltochessbot c 챔피언 이름","*2. 시너지 정보*", "@loltochessbot s 귀족 or 챔피언 이름","*3. 가이드*", "@loltochessbot g (1 ~ 5)"]
     )
     message = [title_block] + [s_block]
     return message
