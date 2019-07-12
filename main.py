@@ -27,7 +27,7 @@ def _crawl_command(text):
 # 가이드 함수
 def _crawl_guide(text):
     menu = text[15:]
-    print(menu)
+    # print(menu)
     if menu == '1' : # gold
         menu_url = 'guide/exp'
         title_block = SectionBlock(
@@ -78,7 +78,7 @@ def _crawl_guide(text):
             allth.append(th.text)
         alltd.append(df)
         df = []
-    print(allth)
+    # print(allth)
     # 글씨 굵게
     bold = []
     for i in allth:
@@ -127,7 +127,7 @@ def _crawl_guide(text):
         )
         message = [title_block] + [img]
 
-    print(message)
+    # print(message)
     return message
 # 챔피언 함수
 def _crawl_champion(text):
@@ -277,10 +277,8 @@ def _crawl_champion(text):
     return [championImageBlock, textBlock, skillBlock, item_text_block, item_image_block]
 
 # 시너지 함수
+# 크롤링 함수 구현하기
 def _crawl_synergies(text):
-    st = text[15:]
-    text = st
-
     url = "https://lolchess.gg/synergies?hl=ko-KR"
     source_code = urllib.request.urlopen(url).read()
     soup = BeautifulSoup(source_code, "html.parser")
@@ -291,7 +289,8 @@ def _crawl_synergies(text):
     # 시너지 효과
     synergy_effect = []
     # 요구하는 시너지 내용
-    synergy_out =[]
+    synergy_out1 =[]
+    synergy_out2 =[]
     # 시너지 챔피언
     synergy_champion = []
 
@@ -372,6 +371,31 @@ def _crawl_synergies(text):
     '트리스타나',
     '파이크',
     '피오라']
+    synergy_index_en={
+        0: 'void',
+        1: 'noble',
+        2: 'ninja',
+        3: 'robot',
+        4: 'glacial',
+        5: 'demon',
+        6: 'wild',
+        7: 'yordle',
+        8: 'dragon',
+        9: 'phantom',
+        10: 'imperial',
+        11 : 'exile',
+        12: 'pirate',
+        13: 'blademaster',
+        14: 'knight',
+        15: 'sorcerer',
+        16: 'guardian',
+        17: 'brawler',
+        18: 'assassin',
+        19: 'elementalist',
+        20: 'ranger',
+        21: 'gunslinger',
+        22: 'shapeshifter',
+    }
 
 
     #시너지 모든 효과 & 옵션 크롤링
@@ -393,24 +417,43 @@ def _crawl_synergies(text):
         synergy_effect = []
         synergy_champion =[]
         synergy_count = []
-
+        synergy_url = []  # 고친부분
     #print(synergy_content) :총 시너지 내용
 
     command = text.split()
-    #print(synergy_content)
-    #print(command)
+    print(command)
 
+    message =[]
+    bin = False
     #입력받은 text에서 시너지 이름 나오면 옵션, 효과, 해당 챔피언 리턴
     for idx in range(len(synergy_index)):
             for cmd in range(len(command)):
                 if synergy_index[idx] in command[cmd]:
-                    synergy_out.append('*'+ synergy_index[idx] +'*')
-                    synergy_out.append(synergy_content[idx][0])
+                    bin = True
+                    print(synergy_index[idx] + " " + command[cmd])
+                    synergy_out1.append('*'+ synergy_index[idx] +'*')
+                    synergy_out1.append(synergy_content[idx][0])
+                    synergy_url.append(synergy_index_en[idx])  # 고친부분
                     if synergy_content[idx][0]=='':
-                        synergy_out.pop()
-                    synergy_out.append(synergy_content[idx][1])
-                    synergy_out.append(synergy_content[idx][2][:7] + synergy_content[idx][2][8:])
-                    synergy_out.append('')
+                        synergy_out1.pop()
+                    synergy_out1.append(synergy_content[idx][1])
+                    synergy_out1.append(synergy_content[idx][2][:7] + synergy_content[idx][2][8:])
+                    synergy_out1.append('')
+                    synergy_out3 ='a'
+
+                    img_src = ImageElement(
+                        image_url="//static.lolchess.gg/images/tft/traiticons-darken/trait_icon_" +synergy_index_en[idx] + ".png",
+                        alt_text="keyword"
+                        )
+                    message.append(
+                        SectionBlock(
+                            text='\n'.join(synergy_out1),
+                            accessory=img_src
+                        )
+                    )
+                    synergy_out1 =[]
+            if bin:
+                synergy_out2.append("")
 
     # 시너지 카운트
     # for idx in range(len(champion_index)):
@@ -419,35 +462,43 @@ def _crawl_synergies(text):
     # for idx in range(len(champion_index)):
     #     for cmd in range(len(command)):
     #         if champion_index[idx] in command[cmd]:
+
     for cnt in range(len(champion_index)):
         for cmd in range(len(command)):
             if champion_index[cnt] in command[cmd]: #가렌이 있어!-> 시너지 찾아
                 for i in range(len(synergy_content)):
                     if champion_index[cnt] in synergy_content[i][2]:
-                        print(synergy_index[i])
+                        # print(synergy_index[i])
                         synergy_count.append(synergy_index[i]) #시너지 다 가져왔어
 
     count_list = [0 for i in range(23)]
-    if not synergy_count == '':
-        synergy_out.append('*보유하고 있는 챔피언 시너지*')
-        synergy_out.append('(시너지 : 챔피언 수)')
+    if len(synergy_count) >0:
+        synergy_out2.append('*보유하고 있는 챔피언 시너지*')
+        synergy_out2.append('(시너지 : 챔피언 수)')
         #각 시너지가 몇개인지 체크
         for i in range(len(synergy_count)):
             for j in range(len(synergy_index)):
-                print(synergy_index[j])
+                # print(synergy_index[j])
                 if synergy_count[i] == synergy_index[j]:
                     count_list[j] += 1
         #1개 이상이면 출력
         for i in range(23):
             if count_list[i] > 0:
-                synergy_out.append(synergy_index[i]+ ' : ' + str(count_list[i]))
+                synergy_out2.append(synergy_index[i]+ ' : ' + str(count_list[i]))
 
-    if synergy_out == []:
-        synergy_out.append("시너지를 잘못 입력하였습니다. 다시 시도해주세요")
+    if synergy_out2 == []:
+        synergy_out2.append("제공할 시너지 정보가 없습니다. 다시 입력해 주세요")
 
-
+    message.append(
+        SectionBlock(
+            text='\n'.join(synergy_out2)
+        )
+    )
     print((synergy_content[4][2]))
-    return '\n'.join(synergy_out)
+    # return '\n'.join(synergy_out)
+
+    return message
+
 # 예외처리
 def _crawl_else():
     title_block = SectionBlock(
@@ -488,8 +539,8 @@ def app_mentioned(event_data):
         message = _crawl_synergies(text)
         slack_web_client.chat_postMessage(
             channel=channel,
-            text=message
-            # text="시너지 정보 입니다."
+            # text=message
+            blocks=extract_json(message)
         )
     else:
         message = _crawl_else()
